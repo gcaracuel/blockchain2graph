@@ -39,7 +39,7 @@ public class IntegrationServiceImplementation implements IntegrationService {
 	 * How many milli seconds in one second.
 	 */
 	public static final float MILLISECONDS_IN_SECONDS = 1000F;
-	
+
 	/**
 	 * Transaction we will skip.
 	 * 0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098 -> Genesis block 1
@@ -48,14 +48,13 @@ public class IntegrationServiceImplementation implements IntegrationService {
 	 * 2a0597e665ac3d1cabeede95cedf907934db7f639e477b3c77b242140d8cf728 -> Block #71036 transaction to wrong address
 	 * a288fec5559c3f73fd3d93db8e8460562ebfe2fcf04a5114e8d0f2920a6270dc -> Block #71036 transaction to wrong address
 	 */
-	private static final String[]  TRANSACTIONS_BANNED = new String[]
-			{
-					"0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098",
-			  		"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-					"e411dbebd2f7d64dafeef9b14b5c59ec60c36779d43f850e5e347abee1e1a455",
-					"2a0597e665ac3d1cabeede95cedf907934db7f639e477b3c77b242140d8cf728",
-					"a288fec5559c3f73fd3d93db8e8460562ebfe2fcf04a5114e8d0f2920a6270dc"
-			};
+	private static final String[]  TRANSACTIONS_BANNED = new String[] {
+			"0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098",
+			"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+			"e411dbebd2f7d64dafeef9b14b5c59ec60c36779d43f850e5e347abee1e1a455",
+			"2a0597e665ac3d1cabeede95cedf907934db7f639e477b3c77b242140d8cf728",
+			"a288fec5559c3f73fd3d93db8e8460562ebfe2fcf04a5114e8d0f2920a6270dc"
+	};
 
 	/**
 	 * Set containing transaction to skip.
