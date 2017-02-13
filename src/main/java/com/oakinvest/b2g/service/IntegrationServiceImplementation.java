@@ -20,10 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+
 
 /**
  * Integrates blockchain data into the database.
@@ -36,16 +39,28 @@ public class IntegrationServiceImplementation implements IntegrationService {
 	 * How many milli seconds in one second.
 	 */
 	public static final float MILLISECONDS_IN_SECONDS = 1000F;
+	
+	/**
+	 * Transaction we will skip.
+	 * 0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098 -> Genesis block 1
+	 * 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b -> Genesis block 2
+	 * e411dbebd2f7d64dafeef9b14b5c59ec60c36779d43f850e5e347abee1e1a455 -> Block #71036 transaction to wrong address
+	 * 2a0597e665ac3d1cabeede95cedf907934db7f639e477b3c77b242140d8cf728 -> Block #71036 transaction to wrong address
+	 * a288fec5559c3f73fd3d93db8e8460562ebfe2fcf04a5114e8d0f2920a6270dc -> Block #71036 transaction to wrong address
+	 */
+	private static final String[]  TRANSACTIONS_BANNED = new String[]
+			{
+					"0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098",
+			  		"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+					"e411dbebd2f7d64dafeef9b14b5c59ec60c36779d43f850e5e347abee1e1a455",
+					"2a0597e665ac3d1cabeede95cedf907934db7f639e477b3c77b242140d8cf728",
+					"a288fec5559c3f73fd3d93db8e8460562ebfe2fcf04a5114e8d0f2920a6270dc"
+			};
 
 	/**
-	 * Genesis transaction hash.
+	 * Set containing transaction to skip.
 	 */
-	private static final String GENESIS_BLOCK_TRANSACTION_HASH_1 = "0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098";
-
-	/**
-	 * Genesis transaction hash.
-	 */
-	private static final String GENESIS_BLOCK_TRANSACTION_HASH_2 = "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b";
+	private static final java.util.Set<String> TRANSACTIONS_BANNED_SET = new HashSet<String>(Arrays.asList(TRANSACTIONS_BANNED));
 
 	/**
 	 * Logger.
@@ -124,7 +139,7 @@ public class IntegrationServiceImplementation implements IntegrationService {
 			}
 		}
 
-		// If the block is already in the datbase, we stop.
+		// If the block is already in the database, we stop.
 		if (bbr.findByHash(blockHash.getResult()) != null) {
 			log.error("Block " + blockHeight + " already registred");
 			status.addErrorMessage("Error in calling getBlock " + block.getError());
@@ -136,14 +151,9 @@ public class IntegrationServiceImplementation implements IntegrationService {
 			Iterator<String> it = block.getResult().getTx().iterator();
 			while (it.hasNext() && success) {
 				String transactionHash = it.next();
-				// We don't treat the genesis block transaction.
-				if (!transactionHash.equals(GENESIS_BLOCK_TRANSACTION_HASH_1) && !transactionHash.equals(GENESIS_BLOCK_TRANSACTION_HASH_2)) {
+				// We don't treat the genesis block transaction and some other transactions that could not be well parsed
+				if (!TRANSACTIONS_BANNED_SET.contains(transactionHash)) {
 					GetRawTransactionResponse transaction = bds.getRawTransaction(transactionHash);
-
-//					if (transaction.getResult().getVin().size() >= 4) {
-//						System.out.println("=> " + transaction.getResult().getTxId());
-//						System.exit(-1);
-//					}
 
 					if (transaction.getError() == null) {
 						transactions.add(transaction.getResult());
