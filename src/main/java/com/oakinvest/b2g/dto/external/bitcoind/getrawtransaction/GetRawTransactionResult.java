@@ -155,7 +155,7 @@ public class GetRawTransactionResult implements Serializable {
 	 * @return hex
 	 */
 	public final String getHex() {
-		return "";
+		return hex;
 	}
 
 	/**

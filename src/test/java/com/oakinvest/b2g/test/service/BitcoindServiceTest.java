@@ -176,7 +176,7 @@ public class BitcoindServiceTest {
 
 		// Test.
 		GetRawTransactionResult r = bds.getRawTransaction(BLOCK_EXISTING_TRANSACTION_HASH).getResult();
-		//assertEquals("Wrong hex", expectedHex, r.getHex());
+		assertEquals("Wrong hex", expectedHex, r.getHex());
 		assertEquals("Wrong tx id", expectedTxID, r.getTxid());
 		assertEquals("Wrong hash", expectedhash, r.getHash());
 		assertEquals("Wrong size", expectedSize, r.getSize());
